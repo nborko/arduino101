@@ -1,0 +1,555 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+
+  <title>Arduino 101</title>
+
+  <meta name="description" content="An introduction to the Arduino development tools">
+  <meta name="author" content="Nicholas Borko">
+
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <link rel="stylesheet" href="css/reveal.min.css">
+  <link rel="stylesheet" href="css/theme/arduino.css" id="theme">
+
+  <!-- For syntax highlighting -->
+  <link rel="stylesheet" href="lib/css/zenburn.css">
+
+  <!-- If the query includes 'print-pdf', use the PDF print sheet -->
+  <script>
+  document.write( '<link rel="stylesheet" href="css/print/' + ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );
+  </script>
+
+  <!--[if lt IE 9]>
+  <script src="lib/js/html5shiv.js"></script>
+  <![endif]-->
+</head>
+
+<body>
+
+  <div class="reveal">
+
+    <!-- Any section element inside of this container is displayed as a slide -->
+    <div class="slides">
+
+      <section>
+        <h1>Arduino 101<br>Basic Programming Concepts</h1>
+        <p class="center">Nick Borko</p>
+        <p class="center">September 28, 2013</p>
+        <p class="center" style="font-size:smaller;">
+          <img src="images/by-nc-sa.png" title="BY-NC-SA" alt="Creative Commons Logo for BY-NC-SA"><br>
+          Except where otherwise noted, this work is licensed under<br>
+          <a href="http://creativecommons.org/licenses/by-nc-sa/3.0" target="_blank">http://creativecommons.org/licenses/by-nc-sa/3.0</a>
+        </p>
+      </section>
+
+      <section>
+        <h2>Agenda</h2>
+        <ul>
+          <li>Introduction</li>
+          <li class="fragment fade-in">Arduino Programming Basics
+            <ul>
+              <li>Minimum Program Structure</li>
+              <li>Input, Output and Delays</li>
+            </ul></li>
+          <li class="fragment fade-in">C++ Programming Concepts
+            <ul>
+              <li>Types and Variables</li>
+              <li>Conditionals, Loops and Functions</li>
+            </ul></li>
+          <li class="fragment fade-in">Conclusion</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Arduino Programming Basics</h2>
+        <ul>
+          <li>Arduino programs are written in C++</li>
+          <li>Arduino programs are built on the Arduino Core
+            <ul>
+              <li>Handles boilerplate initialization code</li>
+              <li>Provides high-level interfaces to control AVR functions</li>
+              <li>Automatically linked to the Arduino program</li>
+            </ul></li>
+          <li>Compiling, linking and uploading is handled by the IDE</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Arduino Programming Basics:</h2>
+        <h3>Arduino Program Structure</h3>
+        <ul>
+          <li>The minimum Arduino program defines 2 functions:
+            <ul>
+              <li>setup() is called when the program starts and runs once, normally used for pin and variable initialization</li>
+              <li>loop() is called continuously after setup() finishes executing (i.e., as an endless loop)</li>
+            </ul></li>
+          <li>Every Arduino program must define both setup() and loop(), although either (or both!) may be empty</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Arduino Programming Basics:</h2>
+        <h3>Arduino Program Structure</h3>
+        <ul>
+          <li>The minimum Arduino program defines 2 functions:
+        <pre><code>// A minimal Arduino program
+// NOTE: Comments start with //
+void setup () {
+  // do nothing one time!
+}
+
+void loop() {
+  // do nothing over and over!
+}</code></pre></li>
+          <li>This program is remarkably uninteresting</li>
+        </ul>
+      </section>
+            
+      <section>
+        <h2>Arduino Programming Basics:</h2>
+        <h3>Input and Output</h3>
+        <ul>
+          <li>The Arduino can also run more interesting programs by reading input and sending output (the whole point to programming!)</li>
+          <li>Input is read from and output is sent to pins on the AVR microprocessor</li>
+          <li>The Arduino board breaks out these pins to headers, which can be used to read and write digital and analog signals</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Arduino Programming Basics:</h2>
+        <h3>Input and Output</h3>
+        <ul>
+          <li>Arduino digital input/output pins are numbered 0-13 (for a total of 14 pins)
+            <ul>
+              <li>Pins 0 and 1 are reserved for serial communication (don't use these!)</li>
+              <li>Pins 2 and 3 can be configured for external interrupts</li>
+              <li>Pins 3, 5, 6, 9, 10 and 11 are capable of Pulse Width Modulation (PWM) analog output</li>
+              <li>Pins 10-13 can be used for SPI (serial) communication</li>
+            </ul></li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Arduino Programming Basics:</h2>
+        <h3>Input and Output</h3>
+        <ul>
+          <li>Arduino analog input pins are numbered A0-A5 (for a total of 6 pins)
+            <ul>
+              <li>Can read an analog values between 0 and 1023 based on a reference voltage (labeled AREF on the Arduino)</li>
+              <li>Can also be used as additional digital input/output pins, numbered 14-19</li>
+              <li>Pins A4 and A5 can be used for TWI ("2-wire" interface), compatible with I<sup>2</sup>C (Inter-Integrated Circuit)</li>
+            </ul></li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Arduino Programming Basics:</h2>
+        <h3>Input and Output</h3>
+        <ul>
+          <li>Pins must be set up for input or output before they can be used:
+            <p class="center"><code>pinMode(<b>PIN</b>, <b>MODE</b>);</code></p>
+            <ul>
+              <li><code><b>PIN</b></code> is a pin number 0-19 or A0-A5</li>
+              <li><code><b>MODE</b></code> is either <code><b>INPUT</b></code> or <code><b>OUTPUT</b></code></li>
+            </ul></li>
+          <li>Usually called in the setup() function</li>
+          <li>You don't need to set the pin mode for a pin you're not using (i.e. not connected)</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Arduino Programming Basics:</h2>
+        <h3>Input and Output</h3>
+        <ul>
+          <li>Example from the Blink sketch
+            <pre><code>void setup() {
+  // initialize the digital pin as an output.
+  // Pin 13 has an LED connected on most Arduino boards:
+  <b>pinMode(13, OUTPUT);</b>
+}</code></pre></li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Arduino Programming Basics:</h2>
+        <h3>Input and Output</h3>
+        <ul>
+          <li>Digital input is read from a selected pin:
+            <p class="center"><code><b>value</b> = digitalRead(<b>PIN</b>);</code></p>
+            <ul>
+              <li><code><b>PIN</b></code> is a pin number 0-13</li>
+              <li><code><b>value</b></code> is returned as either <code><b>LOW</b></code> or <code><b>HIGH</b></code></li>
+            </ul></li>
+          <li>Digital output is written to a selected pin:
+            <p class="center"><code>digitalWrite(<b>PIN</b>, <b>VALUE</b>);</code></p>
+            <ul>
+              <li><code><b>PIN</b></code> is a pin number 0-19</li>
+              <li><code><b>VALUE</b></code> is either <code><b>LOW</b></code> or <code><b>HIGH</b></code></li>
+            </ul></li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Arduino Programming Basics:</h2>
+        <h3>Input and Output</h3>
+        <ul>
+          <li>Example from the Blink sketch
+            <pre><code>void loop() {
+  <b>digitalWrite(13, HIGH);</b> // set the LED on
+  delay(1000);            // wait for a second
+  <b>digitalWrite(13, LOW);</b>  // set the LED off
+  delay(1000);            // wait for a second
+}</code></pre></li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Arduino Programming Basics:</h2>
+        <h3>Input and Output</h3>
+        <ul>
+          <li>Analog input is read from an analog pin:
+            <p class="center"><code><b>value</b> = analogRead(<b>PIN</b>);</code></p>
+            <ul>
+              <li><code><b>PIN</b></code> is a pin number A0-A5 (or 14-19)</li>
+              <li><code><b>value</b></code> is returned as a number 0-1023</li>
+            </ul></li>
+          <li>Analog output is written to a PWM pin:
+            <p class="center"><code>analogWrite(<b>PIN</b>, <b>VALUE</b>);</code></p>
+            <ul>
+              <li><code><b>PIN</b></code> is a pin number 3, 5, 6, 9, 10 or 11</li>
+              <li><code><b>VALUE</b></code> is a number from 0 to 255</li>
+            </ul></li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Arduino Programming Basics:</h2>
+        <h3>Input and Output</h3>
+        <ul>
+          <li>There are other ways to do input and output:
+            <ul>
+              <li>tone()</li>
+              <li>shiftIn()</li>
+              <li>shiftOut()</li>
+              <li>pulseIn()</li>
+              <li>SPI, SoftwareSerial and Wire libraries</li>
+            </ul></li>
+          <li>Except for tone(), we won't be covering these in this workshop</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Arduino Programming Basics:</h2>
+        <h3>Killing Time</h3>
+        <ul>
+          <li>Simple sketches can use the delay() and delayMicroseconds() functions
+            <ul>
+              <li><b>delay()</b> takes a numerical argument for the number of milliseconds (0.001 seconds) to delay execution</li>
+              <li><b>delayMicroseconds()</b> takes a numerical argument for the number of microseconds (0.000001 seconds), up to 16k microseconds</li>
+            </ul></li>
+          <li>Program execution "halts" during a delay, so use with care</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Arduino Programming Basics:</h2>
+        <h3>Killing Time</h3>
+        <ul>
+          <li>Example from the Blink sketch
+            <pre><code>void loop() {
+  digitalWrite(13, HIGH); // set the LED on
+  <b>delay(1000);</b>            // wait for a second
+  digitalWrite(13, LOW);  // set the LED off
+  <b>delay(1000);</b>            // wait for a second
+}</code></pre></li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>C++ Programming Concepts</h2>
+        <ul>
+          <li>Although the programming environment is based on Processing, the programming language for Arduino is C++
+            <ul>
+              <li>Variables are typed (strongly) and must be declared before use</li>
+              <li>Statements end with a semicolon <code><b>;</b></code></li>
+              <li>Curly braces <code><b>{}</b></code> are used to mark program blocks</li>
+              <li>Single line comments begin with <code><b>//</b></code>, multiline comments are marked with <code><b>/* ... */</b></code></li>
+            </ul></li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>C++ Programming Concepts</h2>
+        <h3>Types and Variables</h3>
+        <ul>
+          <li>All variables and data have a type
+            <ul>
+              <li>C++ types: int, float, char, bool, void, et. al.</li>
+              <li>Arduino types: boolean, byte, string, array</li>
+            </ul></li>
+          <li>All variables must be declared before use
+            <ul>
+              <li>Variable declarations can appear anywhere, as long as it's before a reference</li>
+              <li>Variables can be initialized in the declaration</li>
+              <li>Variables are scoped by execution block</li>
+            </ul></li>
+          <li>Variable names start with a letter or _</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>C++ Programming Concepts:</h2>
+        <h3>Types and Variables</h3>
+        <ul>
+          <li>Variables can be assigned values and used in expressions
+            <pre><code>int a = 2;
+int b = 3;
+int c;
+c = a + b;     // c now has a value of 5
+c = b * 4;     // c now has a value of 12
+a = a + 1;     // a now has a value of 3
+c = a * b – c; // c now has a value of -3</code></pre>
+          <li>If you haven't programmed before, don't worry about it; you won't be writing code</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>C++ Programming Concepts:</h2>
+        <h3>Types and Variables</h3>
+        <ul>
+          <li>Example from the Fade sketch
+            <pre><code><b>int brightness = 0;</b> // how bright the LED is
+<b>int fadeAmount = 5;</b> // how many points to fade the LED by
+
+void setup() {
+  // declare pin 9 to be an output:
+  pinMode(9, OUTPUT);
+}
+
+void loop() {
+  // set the brightness of pin 9:
+  analogWrite(9, brightness);
+  // change the brightness for next time through the loop:
+  <b>brightness = brightness + fadeAmount;</b>
+  // reverse the direction of the fading at the ends of the fade:
+  if (brightness == 0 || brightness == 255) {
+    <b>fadeAmount = -fadeAmount ;</b>
+  }
+  // wait for 30 milliseconds to see the dimming effect
+  delay(30);
+}</code></pre></li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>C++ Programming Concepts</h2>
+        <h3>Conditionals</h3>
+        <ul>
+          <li>C++ has if/else and switch/case control structures, but we will only cover if/else</li>
+          <li>The if/else statements allow conditional execution of code
+            <ul>
+              <li>If an expression evaluates to "true," then the code block following an <b>if</b> statement is executed</li>
+              <li>If the expression evaluates to "false," then the code block follow the adjoining <b>else</b> statement is executed</li>
+            </ul></li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>C++ Programming Concepts</h2>
+        <h3>Conditionals</h3>
+        <ul>
+          <li>All expressions evaluate to "true" or "false," where "false" is defined as "0" (zero), and "true" is anything else</li>
+          <li>Boolean expressions evaluate to true or false
+            <ul>
+              <li>Equality (<code>==</code>) and inequality (<code>!=</code>)</li>
+              <li>Numerical comparisons (<code>&lt;</code>, <code>&gt;</code>, <code>&lt;=</code>, <code>&gt;=</code>)</li>
+              <li>Boolean operators <b>not</b> (<code>!</code>), <b>and</b> (<code>&amp;&amp;</code>), <b>or</b> (<code>||</code>)</li>
+              <li>Note that string comparisons use functions</li>
+            </ul></li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>C++ Programming Concepts:</h2>
+        <h3>Conditionals</h3>
+        <ul>
+          <li>Example from the Fade sketch
+            <pre><code>int brightness = 0; // how bright the LED is
+int fadeAmount = 5; // how many points to fade the LED by
+
+void setup() {
+  // declare pin 9 to be an output:
+  pinMode(9, OUTPUT);
+}
+
+void loop() {
+  // set the brightness of pin 9:
+  analogWrite(9, brightness);
+  // change the brightness for next time through the loop:
+  brightness = brightness + fadeAmount;
+  // reverse the direction of the fading at the ends of the fade:
+  <b>if (brightness == 0 || brightness == 255) {
+    fadeAmount = -fadeAmount ;
+  }</b>
+  // wait for 30 milliseconds to see the dimming effect
+  delay(30);
+}</code></pre></li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>C++ Programming Concepts</h2>
+        <h3>Loops</h3>
+        <ul>
+          <li>Loops allow a block of code to be executed more than once without duplicating code</li>
+          <li>C++ supports <b>for</b> and <b>while</b> loops</li>
+          <li>You won't be writing any code for this workshop, but you do need to recognize loops in code</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>C++ Programming Concepts</h2>
+        <h3>Loops</h3>
+        <ul>
+          <li>The <b>while</b> loop executes a code block as long as the <b>condition</b> is true
+            <pre><code>while(<b>condition</b>) {
+  // code block
+}</code></pre></li>
+          <li>A <b>do...while</b> construct is also available
+            <pre><code>do {
+  // code block
+} while(<b>condition</b>);</code></pre></li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>C++ Programming Concepts</h2>
+        <h3>Loops</h3>
+        <ul>
+          <li>The <b>for</b> loop is just a modified <b>while</b> loop
+            <pre><code>for(<b>init</b>; <b>condition</b>; <b>loop statement</b>) {
+  // code block
+}</code></pre>
+            <ul>
+              <li><b>init</b> is a statement that is executed once before the loop begins</li>
+              <li>The code block is executed as long as the <b>condition</b> is true (as in a <b>while</b> loop)</li>
+              <li>The <b>loop statement</b> is executed at the end of each iteration of the code block</li>
+            </ul></li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>C++ Programming Concepts</h2>
+        <h3>Loops</h3>
+        <ul>
+          <li>The <b>for</b> loop is just a modified <b>while</b> loop
+            <pre><code>for(<b>init</b>; <b>condition</b>; <b>loop statement</b>) {
+  // code block
+}</code></pre>
+            <ul>
+              <li>This is exactly equivalent to:
+                <pre><code><b>init;</b>
+while(<b>condition</b>) {
+  // code block
+  <b>loop statement;</b>
+}</code></pre></li>
+            </ul></li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>C++ Programming Concepts</h2>
+        <h3>Functions</h3>
+        <ul>
+          <li>A function is a group of statements that is executed when it is called from some point of the program</li>
+          <li>Functions allow you to execute the same code block at different places in your program</li>
+          <li>You are already writing functions, setup() and loop()</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>C++ Programming Concepts</h2>
+        <h3>Functions</h3>
+        <ul>
+          <li>Functions can take parameters and return values</li>
+          <li>Function examples:
+            <pre><code>void blinkLed(int pin, int milliseconds) {
+  digitalWrite(pin, HIGH);
+  delay(milliseconds);
+  digitalWrite(pin, LOW);
+}
+
+int celsuisToFahrenheit(int degrees) {
+  return degrees * 1.8 + 32;
+}</code></pre></li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Conclusion</h2>
+        <ul>
+          <li>Arduino Programming Basics
+            <ul>
+              <li>Minimum Program Structure</li>
+              <li>Input, Output and Delays</li>
+            </ul></li>
+          <li>C++ Programming Concepts
+            <ul>
+              <li>Types and Variables</li>
+              <li>Conditionals, Loops and Functions</li>
+            </ul></li>
+          <li>Next Steps: Get your hands dirty!</li>
+        </ul>
+      </section>
+
+      <section>
+        <p class="center">
+          This presentation is available online at:<br>
+          <a href="http://nborko.github.io/arduino101/">http://nborko.github.io/arduino101/</a>
+        </p>
+        <p class="center">
+          All source files used for this workshop are available online at:<br>
+          <a href="https://github.com/nborko/arduino101">https://github.com/nborko/arduino101</a>
+        </p>
+      </section>
+
+    </div>
+
+    <div class="footer">
+      <img src="images/by-nc-sa-small.png" height="50" style="position:fixed;left:25px;" title="BY-NC-SA" alt="Creative Commons Logo for BY-NC-SA">
+      <b>Arduino 101</b><br>
+      Presented by Nicholas Borko
+    </div>
+
+  </div>
+
+  <script src="lib/js/head.min.js"></script>
+  <script src="js/reveal.min.js"></script>
+
+  <script>
+    Reveal.initialize({
+      width: 1024,
+      height: 768,
+      controls: true,
+      progress: true,
+      history: true,
+      center: true,
+      //theme: 'arduino',
+      transition: 'cube', // default/cube/page/concave/zoom/linear/fade/none
+      dependencies: [
+        { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+        { src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad() } },
+        { src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+        { src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+      ]
+    });
+  </script>
+
+</body>
+</html>

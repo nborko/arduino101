@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>Arduino 101</title>
+  <meta name="description" content="An introduction to the Arduino development tools">
+  <meta name="author" content="Nicholas Borko">
+  <style type="text/css">
+body {
+  background: url(images/arduino-bg.jpg) no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+  font-family: Arial,Helvetica,sans-serif;
+  font-size: 24px;
+  letter-spacing: -0.02em;
+  color: #111;
+}
+.center {
+  text-align: center;
+}
+.hint {
+  display: none;
+}
+  </style>
+  <script type="text/javascript">
+function togglehint(num) {
+  var el = document.getElementsByClassName("hint" + num);
+  for (var i = 0; i < el.length; i++) {
+    el[i].style.display = el[i].style.display == "block" ? "" : "block";
+  }
+}
+  </script>
+</head>
+
+<body>
+  <h1 class="center" style="line-height:0.8;">ARDUINO 101<br><small>By Nicholas Borko</small></h1>
+  <h3 class="center">Alternative Project: Traffic Signal Controller</h3>
+  <p>
+    <b>Objective:</b> Design a traffic signal controller for an intersection,
+    including a cross-walk control.
+  </p>
+  <p>
+    <b>Goals:</b> Create 2 cross traffic signals using red, yellow and green
+    LEDs.  Use the red-green LED to create a cross-walk signal for one of the
+    directions.  Use one of the push buttons as a pedestrian control to
+    shorten the light to activate the WALK signal.
+  </p>
+  <div>
+    <p>
+      <b>Hints:</b> Activate the hint links below to reveal some hints to help
+      you accomplish the project.
+    </p>
+    <a href="javascript:void(0)" onclick="togglehint(1)" title="Toggle Hint">Hint #1: How should it work?</a>
+    <p class="hint hint1">
+      Each traffic signal should be RED (or GREEN) for 30 seconds.  Between
+      green and red transition, the signal should be YELLOW for 2 seconds.
+      There should be a 1 second delay when BOTH signals are RED.<br><br>
+      When the traffic signal with the cross-walk signal turns green, the
+      cross-walk signal should be FLASHING GREEN for 10 seconds, SOLID
+      GREEN for 10 seconds, FLASHING RED for 10 seconds, and SOLID RED for
+      opposing yellow and red signals.<br><br>
+      If the opposing traffic signal has more than 10 seconds left being green
+      when the cross-walk button is pressed, then it should immediately be
+      reduced to 10 seconds.  The button will have no effect in any other
+      situation.<br><br>
+      The times set forth are for "real world" timing.  You cut times in half
+      to make development and debugging easier.
+    </p>
+    <br><a href="javascript:void(0)" onclick="togglehint(2)" title="Toggle Hint">Hint #2: Pseudocode</a>
+    <p class="hint hint2">
+      The following is <b>suggested pseudocode</b> to control the traffic
+      signal.  There is more than one way to do it, so your code doesn't
+      necessarily have to match as long as it works correctly.  Note that this
+      code does not include any "setup" code you might need to control your
+      input and output pins on the Arduino.
+    </p>
+    <pre class="hint hint2">TURN SIGNAL1 RED
+TURN SIGNAL2 RED
+TURN CROSSWALK RED
+BEGIN LOOP
+    WAIT 1 SECOND
+    TURN SIGNAL1 GREEN
+    WHILE WAITING 20 SECONDS
+        IF BUTTON IS PRESSED THEN
+            STOP WAITING
+        END IF
+    END WHILE
+    WAIT 10 SECONDS
+    TURN SIGNAL1 YELLOW
+    WAIT 2 SECONDS
+    TURN SIGNAL1 RED
+    WAIT 1 SECOND
+    TURN SIGNAL2 GREEN
+    WHILE WAITING 10 SECONDS
+        FLASH CROSSWALK GREEN
+    END WHILE
+    WHILE WAITING 10 SECONDS
+        TURN CROSSWALK GREEN
+    END WHILE
+    WHILE WAITING 10 SECONDS
+        FLASH CROSSWALK RED
+    END WHILE
+    TURN CROSSWALK RED
+    TURN SIGNAL2 YELLOW
+    WAIT 2 SECONDS
+    TURN SIGNAL2 RED
+END LOOP</pre> <br><a href="javascript:void(0)" onclick="togglehint(3)" title="Toggle Hint">Hint #3: Reading
+    the Button (code)</a>
+    <p class="hint hint3">
+      If you recall, the Arduino delay() function effectively halts exection of
+      your code, so you can't read the button during a delay().  The answer is
+      to loop through a series of small delays that add up to the time you want
+      to wait.  Although it won't be exact, it will be close enough to human
+      users.  Here is an example of some code to do this:
+    </p>
+    <pre class="hint hint3">    for (int i = 0; i < 2000; i++) {
+        if (digitalRead(buttonPin) == LOW) {
+            break; // The break statement breaks out of the for loop
+        }
+        delay(10); // Delay 10ms. When run 2000 times, this equals 20 seconds
+    }</pre>
+    <p class="hint hint3">
+      If more precise timing is needed, you could instead use the millis()
+      function to figure out how much time has passed, but that's left as
+      an exercise to the reader.
+    </p>
+    <br><a href="javascript:void(0)" onclick="togglehint(4)" title="Toggle Hint">Hint #4: Flashing the Cross-Walk Light (code)</a>
+    <p class="hint hint4">
+      Your bicolor (red-green) LED has 3 leads.  This LED is in a <b>common
+      cathode</b> configuration, meaning that the 2 LEDs inside this single
+      package share a common cathode, while the anodes are separate for each
+      color.  The common cathode is the longest lead, which is the center lead.
+      The red anode is the next longest lead, and the green anode is the
+      shortest lead.  If you treat it as though it's 2 separate LEDs, then
+      wiring should be a snap.<br><br>
+      Flashing a LED is one of the first projects we looked at, but if you
+      still need help, here is some sample code to get you started:
+    </p>
+    <pre class="hint hint4">    for (int i = 0; i < 10; i++) {
+        digitalWrite(ledPin, HIGH);
+        delay(500);
+        digitalWrite(ledPin, LOW);
+        delay(500);
+    }
+    </p>
+    <br>
+  </div>
+  <p class="center" style="font-size:smaller;">
+    <img src="images/by-nc-sa.png" title="BY-NC-SA" alt="Creative Commons Logo for BY-NC-SA"><br>
+    Except where otherwise noted, this work is licensed under<br>
+    <a href="http://creativecommons.org/licenses/by-nc-sa/3.0" target="_blank">http://creativecommons.org/licenses/by-nc-sa/3.0</a>
+  </p>
+</body>
+
+</html>
